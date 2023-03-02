@@ -39,11 +39,17 @@ def sitemap():
 @app.route('/user', methods=['GET'])
 def handle_hello():
 
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
+    users = User.query.all()
+    all_users = list(map(lambda x: x.serialize(), users))
 
-    return jsonify(response_body), 200
+    return jsonify(all_users), 200
+
+@app.route('/user', methods=['POST'])
+def create_user():
+
+    request_body_user = request.get_json()
+    print(request_body_user)
+    return jsonify(request_body_user), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
