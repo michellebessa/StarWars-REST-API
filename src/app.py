@@ -48,8 +48,44 @@ def handle_hello():
 def create_user():
 
     request_body_user = request.get_json()
-    print(request_body_user)
+    
+    user1 = User(firstname=request_body_user["first_name"], email=request_body_user["email"], password=request_body_user["password"])
+    db.session.add(user1)
+    db.session.commit()
+
     return jsonify(request_body_user), 200
+
+@app.route('/user/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+
+    request_body_user = request.get_json()
+    
+    user1 = User.query.get(user_id)
+    if user1 is None:
+        raise APIException('User not found', status_code=404)
+
+    if "username" in request_body_user:
+        user1.username = body["username"]
+    if "email" in request_body_user:
+        user1.email = body["email"]
+    if "first_name" in request_body_user:
+        user1.first_name = request_body_user["first_name"]
+    db.session.commit()
+
+    return jsonify(request_body_user), 200
+
+@app.route('/user/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+
+    request_body_user = request.get_json()
+    
+    user1 = User.query.get(user_id)
+    if user1 is None:
+        raise APIException('User not found', status_code=404)
+    db.session.delete(user1)
+    db.session.commit()
+
+    return jsonify("ok"), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
